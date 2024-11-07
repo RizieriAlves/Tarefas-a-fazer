@@ -1,213 +1,213 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="normalize.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="normalize.css" />
     <title>Tarefas</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="container">
-        <div id="container_adicionar">
-            <h1>Tarefas a fazer</h1>
-            <form action="#">
-                <input type="text" id="nometarefa">
-                <button id="adicionar">+</button>
-            </form>
-        </div>
-        <div id="container_tarefas">
-
-
-        </div>
-
+      <div id="container_adicionar">
+        <h1>Tarefas a fazer</h1>
+        <form action="#">
+          <input type="text" id="nometarefa" />
+          <button id="adicionar">+</button>
+        </form>
+      </div>
+      <div id="container_tarefas"></div>
     </div>
 
-
     <script>
-
-        //Obtêm tarefas
-        let arr_tarefas = []
-        if (localStorage.length != 0) {
-            if (JSON.parse(getLS()).length != 0) {
-                arr_tarefas = JSON.parse(getLS())
-            }
-        } else{
-            saveLS()
-        } 
-
-        function getLS() {
-            return localStorage.getItem("tarefas")
+      //Obtêm tarefas
+      let arr_tarefas = [];
+      if (localStorage.length != 0) {
+        if (JSON.parse(getLS()).length != 0) {
+          arr_tarefas = JSON.parse(getLS());
         }
+      } else {
+        saveLS();
+      }
 
-        function saveLS() {
-            localStorage.setItem("tarefas", JSON.stringify(arr_tarefas))
-        }
+      function getLS() {
+        return localStorage.getItem("tarefas");
+      }
 
-        //Gera tarefas obtidas
-        ; (function () {
-            generateTarefas()
-        })()
+      function saveLS() {
+        localStorage.setItem("tarefas", JSON.stringify(arr_tarefas));
+      }
 
-        //Gera as tarefas do array
-        function generateTarefas(e) {
-            //Obtêm elementos DOM
-            const add_tarefa = document.getElementById("adicionar")
-            const tarefas = document.getElementById("container_tarefas")
-            add_tarefa.addEventListener("click", adicionartarefa)
+      //Gera tarefas obtidas
+      (function () {
+        generateTarefas();
+      })();
 
-            //Remove as tarefas anteriores
-            tarefas.innerHTML = ''
+      //Gera as tarefas do array
+      function generateTarefas(e) {
+        //Obtêm elementos DOM
+        const add_tarefa = document.getElementById("adicionar");
+        const tarefas = document.getElementById("container_tarefas");
+        add_tarefa.addEventListener("click", adicionartarefa);
 
-            arr_tarefas.forEach(function (obj) {
+        //Remove as tarefas anteriores
+        tarefas.innerHTML = "";
 
-                //Cria container tarefa
-                const container_tarefa = document.createElement("div")
-                container_tarefa.setAttribute("class", "container_tarefa")
-                container_tarefa.setAttribute("style", "margin: 10px; position:relative;")
+        arr_tarefas.forEach(function (obj) {
+          //Cria container tarefa
+          const container_tarefa = document.createElement("div");
+          container_tarefa.setAttribute("class", "container_tarefa");
+          container_tarefa.setAttribute(
+            "style",
+            "margin: 10px; position:relative;"
+          );
 
-                //Div com checkbox + Tarefa
-                const container_descricao = document.createElement("div")
-                container_descricao.setAttribute("id", "descricao")
-                container_descricao.setAttribute("style", "display: flex; max-width:80%")
-                const checkbox = document.createElement("input")
-                checkbox.setAttribute("type", "checkbox")
-                let span_tarefa = document.createElement("span")
-                span_tarefa.setAttribute("class", "descricao_tarefa")
-                span_tarefa.insertAdjacentText("afterbegin", obj.tarefa)
-                span_tarefa.setAttribute("style", "margin: 10px;")
+          //Div com checkbox + Tarefa
+          const container_descricao = document.createElement("div");
+          container_descricao.setAttribute("id", "descricao");
+          container_descricao.setAttribute(
+            "style",
+            "display: flex; max-width:80%"
+          );
+          const checkbox = document.createElement("input");
+          checkbox.setAttribute("type", "checkbox");
+          checkbox.addEventListener("change", function () {
+            obj.done = !obj.done;
+            saveLS();
+          });
+          if (obj.done == true) {
+            checkbox.setAttribute("checked", true);
+          } else {
+            console.log("tarefa não finalizada");
+          }
+          let span_tarefa = document.createElement("span");
+          span_tarefa.setAttribute("class", "descricao_tarefa");
+          span_tarefa.insertAdjacentText("afterbegin", obj.tarefa);
+          span_tarefa.setAttribute("style", "margin: 10px;");
 
+          //Div Ações da tarefa
+          const container_acoes = document.createElement("div");
+          container_acoes.setAttribute("class", "acoes");
 
-                //Div Ações da tarefa
-                const container_acoes = document.createElement("div")
-                container_acoes.setAttribute("class", "acoes")
-
-                //botão editar
-                const botao_editar = document.createElement("button")
-                botao_editar.setAttribute("class", "editar")
-                botao_editar.setAttribute('id', obj.id)
-                const icon_editar = `
+          //botão editar
+          const botao_editar = document.createElement("button");
+          botao_editar.setAttribute("class", "editar");
+          botao_editar.setAttribute("id", obj.id);
+          const icon_editar = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                 <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/>
             </svg>
-        `
-                //Criar caixa de texto para editar
-                const div_edit = document.createElement("div")
-                div_edit.classList.add("textoedicao")
-                div_edit.classList.add("none")
-                const texto_input = document.createElement("input")
-                texto_input.setAttribute("type", "text")
-                texto_input.setAttribute("style", "padding:5px")
-                div_edit.append(texto_input)
+        `;
+          //Criar caixa de texto para editar
+          const div_edit = document.createElement("div");
+          div_edit.classList.add("textoedicao");
+          div_edit.classList.add("none");
+          const texto_input = document.createElement("input");
+          texto_input.setAttribute("type", "text");
+          texto_input.setAttribute("style", "padding:5px");
+          div_edit.append(texto_input);
 
-                const confirm = document.createElement("button")
-                confirm.setAttribute("id", obj.id)
-                confirm.classList.add("confirm")
-                confirm.innerText = "OK"
+          const confirm = document.createElement("button");
+          confirm.setAttribute("id", obj.id);
+          confirm.classList.add("confirm");
+          confirm.innerText = "OK";
 
-                div_edit.append(confirm)
+          div_edit.append(confirm);
 
-
-
-                const botao_excluir = document.createElement("button")
-                botao_excluir.setAttribute("class", "excluir")
-                botao_excluir.setAttribute('id', obj.id)
-                const icon_excluir = `<svg xmlns="http://www.w3.org/2000/svg"
+          const botao_excluir = document.createElement("button");
+          botao_excluir.setAttribute("class", "excluir");
+          botao_excluir.setAttribute("id", obj.id);
+          const icon_excluir = `<svg xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                             <path
                                 d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
-                        </svg>`
+                        </svg>`;
 
-                //Checkbox e descricao
-                container_descricao.append(checkbox)
-                container_descricao.append(span_tarefa)
-                container_tarefa.append(container_descricao)
+          //Checkbox e descricao
+          container_descricao.append(checkbox);
+          container_descricao.append(span_tarefa);
+          container_tarefa.append(container_descricao);
 
+          //Inclusão botões
+          botao_editar.insertAdjacentHTML("afterbegin", icon_editar);
+          botao_excluir.insertAdjacentHTML("afterbegin", icon_excluir);
+          container_acoes.append(botao_editar);
+          container_acoes.append(botao_excluir);
+          container_tarefa.append(container_acoes);
 
-                //Inclusão botões
-                botao_editar.insertAdjacentHTML("afterbegin", icon_editar)
-                botao_excluir.insertAdjacentHTML("afterbegin", icon_excluir)
-                container_acoes.append(botao_editar)
-                container_acoes.append(botao_excluir)
-                container_tarefa.append(container_acoes)
+          tarefas.append(container_tarefa);
 
-                tarefas.append(container_tarefa)
+          container_tarefa.insertAdjacentElement("beforeend", div_edit);
+        });
+      }
 
-                container_tarefa.insertAdjacentElement("beforeend", div_edit)
-
-            })
-
+      function adicionartarefa(e) {
+        //Obtêm tarefa
+        let tarefa = document.getElementById("nometarefa").value;
+        e.preventDefault();
+        if (tarefa != "") {
+          let id = arr_tarefas.length;
+          let obj = { id: id, tarefa: tarefa, done: false };
+          arr_tarefas.push(obj);
+          saveLS();
+          generateTarefas();
         }
+      }
 
-        function adicionartarefa(e) {
-            //Obtêm tarefa
-            let tarefa = document.getElementById("nometarefa").value
-            e.preventDefault()
-            if (tarefa != "") {
-                let id = arr_tarefas.length
-                let obj = { id: id, tarefa: tarefa }
-                arr_tarefas.push(obj)
-                saveLS()
-                generateTarefas()
-            }
+      function excluir() {
+        let remove = this.id;
+        arr_tarefas.pop(remove);
+        saveLS();
+        generateTarefas();
+      }
+
+      function editar() {
+        let valor_atual =
+          this.parentElement.parentElement.querySelector(
+            ".descricao_tarefa"
+          ).textContent;
+        let div_edit = this.parentElement.nextSibling;
+        div_edit.classList.remove("none");
+        let novo_valor = this.parentElement.parentElement.lastChild.firstChild;
+        novo_valor.value = valor_atual;
+        novo_valor.focus();
+        novo_valor.addEventListener("keydown", enter);
+      }
+
+      function enter(e) {
+        if (e.keyCode == 13) {
+          let ok = e.target.parentElement.querySelector(".confirm");
+          e.target.removeEventListener("keydown", enter);
+          confirmedit.call(ok);
         }
+      }
 
-        function excluir() {
-            let remove = this.id
-            arr_tarefas.pop(remove)
-            saveLS()
-            generateTarefas()
+      function confirmedit() {
+        let novo_valor = this.parentElement.firstChild.value;
+        let id = this.id;
+        arr_tarefas[id].tarefa = novo_valor;
+        this.parentElement.classList.add("none");
+        saveLS();
+        generateTarefas();
+      }
 
+      //Delegação de Eventos
+      const container = document.getElementById("container");
+      container.addEventListener("click", function (e) {
+        const target = e.target;
+
+        // Procura o closest botão ou SVG clicado.
+        // Utilizado desta forma pois o SVG ficava em frente ao botão, impedindo o funcionamento ideal.
+        if (target.closest(".editar")) {
+          editar.call(target.closest(".editar"));
+        } else if (target.closest(".excluir")) {
+          excluir.call(target.closest(".excluir"));
+        } else if (target.closest(".confirm")) {
+          confirmedit.call(target.closest(".confirm"));
         }
-
-        function editar() {
-            let valor_atual = this.parentElement.parentElement.querySelector(".descricao_tarefa").textContent
-            let div_edit = this.parentElement.nextSibling
-            div_edit.classList.remove("none")
-            let novo_valor = this.parentElement.parentElement.lastChild.firstChild
-            novo_valor.value = valor_atual
-            novo_valor.focus()
-            novo_valor.addEventListener("keydown", enter)
-        }
-
-        function enter(e) {
-            if (e.keyCode == 13) {
-                let ok = e.target.parentElement.querySelector(".confirm");
-                e.target.removeEventListener("keydown", enter)
-                confirmedit.call(ok)
-            }
-        }
-
-
-        function confirmedit() {
-            let novo_valor = this.parentElement.firstChild.value
-            let id = this.id
-            arr_tarefas[id].tarefa = novo_valor
-            this.parentElement.classList.add("none")
-            saveLS()
-            generateTarefas()
-        }
-
-        //Delegação de Eventos
-        const container = document.getElementById("container");
-        container.addEventListener("click", function (e) {
-            const target = e.target;
-
-            // Procura o closest botão ou SVG clicado. 
-            // Utilizado desta forma pois o SVG ficava em frente ao botão, impedindo o funcionamento ideal.
-            if (target.closest(".editar")) {
-                editar.call(target.closest(".editar"));
-            } else if (target.closest(".excluir")) {
-                excluir.call(target.closest(".excluir"));
-            } else if (target.closest(".confirm")) {
-                confirmedit.call(target.closest(".confirm"));
-            }
-        })
+      });
     </script>
-
-</body>
-
+  </body>
 </html>
