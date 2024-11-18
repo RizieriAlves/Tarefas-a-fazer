@@ -93,7 +93,7 @@
           //botão editar
           const botao_editar = document.createElement("button");
           botao_editar.setAttribute("class", "editar");
-          botao_editar.setAttribute("id", obj.id);
+
           const icon_editar = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -110,7 +110,7 @@
           div_edit.append(texto_input);
 
           const confirm = document.createElement("button");
-          confirm.setAttribute("id", obj.id);
+
           confirm.classList.add("confirm");
           confirm.innerText = "OK";
 
@@ -118,7 +118,7 @@
 
           const botao_excluir = document.createElement("button");
           botao_excluir.setAttribute("class", "excluir");
-          botao_excluir.setAttribute("id", obj.id);
+
           const icon_excluir = `<svg xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                             <path
@@ -149,7 +149,7 @@
         e.preventDefault();
         if (tarefa != "") {
           let id = arr_tarefas.length;
-          let obj = { id: id, tarefa: tarefa, done: false };
+          let obj = { tarefa: tarefa, done: false };
           arr_tarefas.push(obj);
           saveLS();
           generateTarefas();
@@ -157,8 +157,10 @@
       }
 
       function excluir() {
-        let remove = this.id;
-        arr_tarefas.pop(remove);
+        const index = [
+          ...this.parentElement.parentElement.parentElement.children,
+        ].indexOf(this.parentElement.parentElement);
+        arr_tarefas.splice(index, 1);
         saveLS();
         generateTarefas();
       }
@@ -185,9 +187,11 @@
       }
 
       function confirmedit() {
+        const index = [
+          ...this.parentElement.parentElement.parentElement.children,
+        ].indexOf(this.parentElement.parentElement);
         let novo_valor = this.parentElement.firstChild.value;
-        let id = this.id;
-        arr_tarefas[id].tarefa = novo_valor;
+        arr_tarefas[index].tarefa = novo_valor;
         this.parentElement.classList.add("none");
         saveLS();
         generateTarefas();
